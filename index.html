@@ -10,7 +10,10 @@
     --green-dark: #1a3a2a; --green-mid: #2d5a3d; --green-light: #4a8c5c;
     --green-pale: #d4e8d8; --gold: #c9a84c; --gold-light: #f0d98a;
     --text: #1a1a18; --text-muted: #5a6356;
-    --birdie: #3b7de8; --eagle: #e8b83b; --bogey: #e85c3b; --double: #c0392b;
+    --birdie: #3b7de8;
+    --eagle: #e8b83b;
+    --bogey: #e85c3b;
+    --double: #c0392b;
     --shadow: 0 4px 24px rgba(26,58,42,0.12);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -32,55 +35,65 @@
   .screen { display: none; background: #eef2ed; min-height: calc(100vh - 116px); }
   .screen.active { display: block; }
 
-  /* ── PLAYER COLORS (cycles through 6 themes) ── */
+  /* ── PLAYER THEMES — colorblind-safe, pattern+shape+color ── */
+  /* Palette: blue, amber, white/black, cyan, orange, magenta — all distinguishable under deuteranopia/protanopia */
   :root {
-    --p0: #2d6a4f; --p0-light: #d8f3dc; --p0-text: #1b4332;
-    --p1: #1d4e89; --p1-light: #dbeafe; --p1-text: #1e3a5f;
-    --p2: #6d3b00; --p2-light: #fef3c7; --p2-text: #5c2d00;
-    --p3: #6b21a8; --p3-light: #f3e8ff; --p3-text: #4a1580;
-    --p4: #9d0208; --p4-light: #ffe5e5; --p4-text: #7a0008;
-    --p5: #164e63; --p5-light: #e0f2fe; --p5-text: #0c3547;
+    --p0: #0057b8; --p0-light: #cce0ff; --p0-text: #002d6b; --p0-accent: #5ba4f5; /* Blue */
+    --p1: #f5a800; --p1-light: #fff0c2; --p1-text: #7a5200; --p1-accent: #f5c842; /* Amber */
+    --p2: #1a1a1a; --p2-light: #e8e8e8; --p2-text: #1a1a1a; --p2-accent: #666;   /* Black */
+    --p3: #00a8a8; --p3-light: #ccf2f2; --p3-text: #005050; --p3-accent: #33cccc; /* Cyan */
+    --p4: #e06000; --p4-light: #ffe5cc; --p4-text: #7a3200; --p4-accent: #f07820; /* Orange */
+    --p5: #8800cc; --p5-light: #eecefc; --p5-text: #4a006b; --p5-accent: #bb55ee; /* Violet */
   }
+
+  /* Player icons — shape-based so color-blind users can distinguish by shape alone */
+  .p-icon { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; font-size: 15px; flex-shrink: 0; }
+  .p-icon.pc0::before { content: '●'; color: var(--p0); }       /* filled circle */
+  .p-icon.pc1::before { content: '■'; color: var(--p1); }       /* filled square */
+  .p-icon.pc2::before { content: '▲'; color: var(--p2); }       /* triangle */
+  .p-icon.pc3::before { content: '◆'; color: var(--p3); }       /* diamond */
+  .p-icon.pc4::before { content: '★'; color: var(--p4); }       /* star */
+  .p-icon.pc5::before { content: '⬟'; color: var(--p5); }       /* pentagon */
+
   /* ── PLAYER BAR ── */
-  .player-bar { background: var(--green-dark); display: flex; align-items: stretch; overflow-x: auto; border-bottom: 1px solid rgba(201,168,76,0.25); scrollbar-width: none; }
+  .player-bar { background: var(--green-dark); display: flex; align-items: stretch; overflow-x: auto; border-bottom: 2px solid rgba(255,255,255,0.08); scrollbar-width: none; }
   .player-bar::-webkit-scrollbar { display: none; }
-  .player-tab { flex-shrink: 0; padding: 9px 12px; font-size: 12px; font-weight: 600; color: var(--green-pale); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.15s; display: flex; align-items: center; gap: 5px; }
+  .player-tab { flex-shrink: 0; padding: 8px 12px; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.45); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.15s; display: flex; align-items: center; gap: 6px; letter-spacing: 0.03em; }
+  .player-tab .p-icon { opacity: 0.5; }
   .player-tab.active { color: #fff; }
-  .player-tab.active.pc0 { border-bottom-color: #52b788; background: rgba(45,106,79,0.35); }
-  .player-tab.active.pc1 { border-bottom-color: #60a5fa; background: rgba(29,78,137,0.35); }
-  .player-tab.active.pc2 { border-bottom-color: #fbbf24; background: rgba(109,59,0,0.35); }
-  .player-tab.active.pc3 { border-bottom-color: #c084fc; background: rgba(107,33,168,0.35); }
-  .player-tab.active.pc4 { border-bottom-color: #f87171; background: rgba(157,2,8,0.35); }
-  .player-tab.active.pc5 { border-bottom-color: #38bdf8; background: rgba(22,78,99,0.35); }
+  .player-tab.active .p-icon { opacity: 1; }
+  .player-tab.active.pc0 { border-bottom-color: var(--p0-accent); background: rgba(0,87,184,0.28); }
+  .player-tab.active.pc1 { border-bottom-color: var(--p1-accent); background: rgba(245,168,0,0.22); }
+  .player-tab.active.pc2 { border-bottom-color: #aaa;             background: rgba(80,80,80,0.30); }
+  .player-tab.active.pc3 { border-bottom-color: var(--p3-accent); background: rgba(0,168,168,0.22); }
+  .player-tab.active.pc4 { border-bottom-color: var(--p4-accent); background: rgba(224,96,0,0.25); }
+  .player-tab.active.pc5 { border-bottom-color: var(--p5-accent); background: rgba(136,0,204,0.22); }
   .player-remove { font-size: 13px; opacity: 0; width: 0; overflow: hidden; transition: opacity 0.2s, width 0.2s; padding: 0; }
   .player-tab:hover .player-remove,
   .player-tab:focus .player-remove { opacity: 0.5; width: 16px; }
   .add-player-btn { flex-shrink: 0; padding: 7px 12px; color: rgba(201,168,76,0.5); font-size: 22px; cursor: pointer; display: flex; align-items: center; transition: color 0.15s; }
   .add-player-btn:active { color: var(--gold); }
 
-  /* ── ACTIVE PLAYER HEADER BAND ── */
-  .player-band { padding: 6px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; }
-  .player-band .band-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .player-band.pb0 { background: var(--p0-light); color: var(--p0-text); }
-  .player-band.pb1 { background: var(--p1-light); color: var(--p1-text); }
-  .player-band.pb2 { background: var(--p2-light); color: var(--p2-text); }
-  .player-band.pb3 { background: var(--p3-light); color: var(--p3-text); }
-  .player-band.pb4 { background: var(--p4-light); color: var(--p4-text); }
-  .player-band.pb5 { background: var(--p5-light); color: var(--p5-text); }
-  .band-dot.pc0 { background: var(--p0); }
-  .band-dot.pc1 { background: var(--p1); }
-  .band-dot.pc2 { background: var(--p2); }
-  .band-dot.pc3 { background: var(--p3); }
-  .band-dot.pc4 { background: var(--p4); }
-  .band-dot.pc5 { background: var(--p5); }
+  /* ── ACTIVE PLAYER BAND — large, unmissable ── */
+  .player-band { padding: 10px 14px; font-size: 14px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 10px; border-bottom: 3px solid transparent; }
+  .player-band .band-icon { font-size: 22px; flex-shrink: 0; line-height: 1; }
+  .player-band .band-label { flex: 1; }
+  .player-band .band-sublabel { font-size: 10px; font-weight: 500; opacity: 0.7; letter-spacing: 0.06em; display: block; margin-top: 1px; font-family: 'DM Mono', monospace; }
+  .player-band.pb0 { background: var(--p0-light); color: var(--p0-text); border-bottom-color: var(--p0); }
+  .player-band.pb1 { background: var(--p1-light); color: var(--p1-text); border-bottom-color: var(--p1); }
+  .player-band.pb2 { background: var(--p2-light); color: var(--p2-text); border-bottom-color: #555; }
+  .player-band.pb3 { background: var(--p3-light); color: var(--p3-text); border-bottom-color: var(--p3); }
+  .player-band.pb4 { background: var(--p4-light); color: var(--p4-text); border-bottom-color: var(--p4); }
+  .player-band.pb5 { background: var(--p5-light); color: var(--p5-text); border-bottom-color: var(--p5); }
 
-  /* Score plus button takes active player color */
-  .score-btn.plus.pc0 { background: var(--p0); }
-  .score-btn.plus.pc1 { background: var(--p1); }
-  .score-btn.plus.pc2 { background: var(--p2); }
-  .score-btn.plus.pc3 { background: var(--p3); }
-  .score-btn.plus.pc4 { background: var(--p4); }
-  .score-btn.plus.pc5 { background: var(--p5); }
+  /* Score + button: large, colored, shaped border per player */
+  .score-btn.plus { width: 38px; height: 38px; font-size: 22px; font-weight: 700; border: 3px solid transparent; }
+  .score-btn.plus.pc0 { background: var(--p0);  color: #fff; border-color: var(--p0-accent); border-radius: 50%; }
+  .score-btn.plus.pc1 { background: var(--p1);  color: #fff; border-color: var(--p1-accent); border-radius: 6px; }
+  .score-btn.plus.pc2 { background: var(--p2);  color: #fff; border-color: #888;             border-radius: 0; }
+  .score-btn.plus.pc3 { background: var(--p3);  color: #fff; border-color: var(--p3-accent); border-radius: 50%; }
+  .score-btn.plus.pc4 { background: var(--p4);  color: #fff; border-color: var(--p4-accent); border-radius: 6px; }
+  .score-btn.plus.pc5 { background: var(--p5);  color: #fff; border-color: var(--p5-accent); border-radius: 0; }
 
   /* ── REMOVE PLAYER CONFIRM MODAL ── */
   #removeConfirmOverlay .modal h3 { color: #9d0208; }
@@ -117,14 +130,17 @@
   .score-btn:active { transform: scale(0.86); }
   .score-btn.minus { background: #e8ede6; color: var(--text-muted); }
   .score-btn.plus  { background: var(--green-light); color: #fff; }
-  .score-display { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 9px; font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 700; transition: background 0.2s, color 0.2s; }
-  .score-display.empty  { background: #f0f4ef; color: #c0ccbc; }
-  .score-display.eagle  { background: var(--eagle);      color: var(--green-dark); }
-  .score-display.birdie { background: var(--birdie);     color: #fff; }
-  .score-display.par    { background: var(--green-pale); color: var(--green-dark); }
-  .score-display.bogey  { background: #fce8e3;           color: var(--bogey); }
-  .score-display.double { background: var(--bogey);      color: #fff; }
-  .score-display.triple { background: var(--double);     color: #fff; }
+  .score-display { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 700; transition: background 0.2s, color 0.2s; position: relative; }
+  /* Shapes: eagle=circle, birdie=rounded square, par=square, bogey=wide pill, double/triple=diamond-ish */
+  .score-display.empty  { background: #f0f4ef; color: #c0ccbc; border-radius: 9px; }
+  .score-display.eagle  { background: #f5c400; color: #1a1a18; border-radius: 50%;   border: 2px solid #c9980a; } /* gold circle */
+  .score-display.birdie { background: #4a90d9; color: #fff;    border-radius: 10px;  border: 2px solid #2c6fab; } /* blue rounded square */
+  .score-display.par    { background: #e8e8e8; color: #1a1a18; border-radius: 4px;   border: 2px solid #aaa; }   /* grey square */
+  .score-display.bogey  { background: #f0a500; color: #1a1a18; border-radius: 22px;  border: 2px solid #c07800; } /* amber pill */
+  .score-display.double { background: #c0392b; color: #fff;    border-radius: 4px;   border: 2px solid #8b1a10; transform: rotate(45deg); font-size: 16px; }
+  .score-display.double span { display: block; transform: rotate(-45deg); }
+  .score-display.triple { background: #6b0000; color: #fff;    border-radius: 4px;   border: 2px solid #3a0000; transform: rotate(45deg); font-size: 16px; }
+  .score-display.triple span { display: block; transform: rotate(-45deg); }
   .score-label { font-size: 9px; text-align: center; margin-top: 1px; color: var(--text-muted); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; text-transform: uppercase; width: 44px; }
 
   /* ── NINE TOTAL ROW ── */
@@ -172,12 +188,43 @@
   .round-vs-par { font-size: 11px; font-family: 'DM Mono', monospace; padding: 2px 7px; border-radius: 20px; background: rgba(255,255,255,0.1); color: var(--green-pale); margin-top: 3px; text-align: center; }
   .delete-round-btn { background: none; border: none; color: rgba(255,255,255,0.3); font-size: 15px; cursor: pointer; padding: 2px 4px; flex-shrink: 0; }
   .round-players-section { padding: 8px 12px 6px; }
-  .round-player-row { margin-bottom: 8px; }
+  .round-player-row { margin-bottom: 10px; }
   .round-player-name { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; font-family: 'DM Mono', monospace; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: baseline; }
   .player-score-inline { color: var(--green-dark); font-family: 'Playfair Display', serif; font-size: 14px; text-transform: none; letter-spacing: 0; }
-  .round-hole-chips { display: flex; flex-wrap: wrap; gap: 3px; }
-  .round-hole-chip { width: 26px; height: 26px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace; }
+  .nine-chip-group { margin-bottom: 6px; }
+  .nine-chip-label { font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; display: flex; align-items: baseline; gap: 5px; }
+  .nine-chip-total { font-family: 'Playfair Display', serif; font-size: 14px; color: var(--green-dark); text-transform: none; letter-spacing: 0; }
+  .nine-chip-vp { font-size: 10px; color: var(--text-muted); }
+  .round-hole-chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .round-hole-chip { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace; flex-shrink: 0; }
   .round-card-footer { padding: 7px 12px; font-size: 10px; color: var(--text-muted); border-top: 1px solid #eef2ed; font-family: 'DM Mono', monospace; }
+
+  /* ── HANDICAP SCREEN ── */
+  #playersScreen { padding: 12px 8px; }
+  .hcp-hero { background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%); border-radius: 14px; padding: 20px; margin-bottom: 12px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: flex-start; }
+  .hcp-hero-left h2 { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 18px; margin-bottom: 2px; }
+  .hcp-hero-left .hcp-sub { font-size: 11px; color: var(--green-pale); font-family: 'DM Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+  .hcp-hero-index { text-align: right; }
+  .hcp-hero-index .hcp-val { font-family: 'Playfair Display', serif; font-size: 52px; color: var(--gold); line-height: 1; }
+  .hcp-hero-index .hcp-lbl { font-size: 11px; color: var(--gold-light); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; }
+  .hcp-hero-index .hcp-note { font-size: 10px; color: rgba(212,232,216,0.6); font-family: 'DM Mono', monospace; margin-top: 3px; }
+  .hcp-stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 12px; }
+  .hcp-stat-box { background: #fff; border-radius: 10px; padding: 10px 6px; text-align: center; box-shadow: var(--shadow); }
+  .hcp-stat-box .sv { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--green-dark); }
+  .hcp-stat-box .sk { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .hcp-section { background: #fff; border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: var(--shadow); }
+  .hcp-section-header { background: var(--green-dark); padding: 8px 14px; font-family: 'Playfair Display', serif; color: var(--gold); font-size: 14px; }
+  .hcp-diff-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; border-bottom: 1px solid #f0f4ef; font-family: 'DM Mono', monospace; font-size: 11px; }
+  .hcp-diff-row:last-child { border-bottom: none; }
+  .hcp-diff-row.used-in-calc { background: #f0fbf4; }
+  .hcp-diff-date { color: var(--text-muted); flex: 1; }
+  .hcp-diff-course { color: var(--text); flex: 2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hcp-diff-val { font-weight: 700; color: var(--green-dark); min-width: 44px; text-align: right; }
+  .hcp-diff-tag { font-size: 9px; background: var(--green-pale); color: var(--green-dark); border-radius: 10px; padding: 1px 6px; margin-left: 4px; }
+  .hcp-empty { text-align: center; padding: 40px 16px; color: var(--text-muted); }
+  .hcp-empty .icon { font-size: 36px; margin-bottom: 8px; }
+  .hcp-empty p { font-size: 13px; line-height: 1.6; }
+  .hcp-formula-note { font-size: 10px; color: var(--text-muted); font-family: 'DM Mono', monospace; padding: 10px 14px; text-align: center; line-height: 1.6; border-top: 1px solid #f0f4ef; }
 
   /* ── COURSES SCREEN ── */
   #coursesScreen { padding: 12px 8px; }
@@ -228,6 +275,7 @@
 <div class="nav-tabs">
   <div class="nav-tab active" id="tab-scorecard" onclick="showScreen('scorecard',this)">Scorecard</div>
   <div class="nav-tab" id="tab-history"           onclick="showScreen('history',this)">History</div>
+  <div class="nav-tab" id="tab-players"           onclick="showScreen('players',this)">Players</div>
   <div class="nav-tab" id="tab-courses"           onclick="showScreen('courses',this)">Courses</div>
 </div>
 
@@ -270,6 +318,9 @@
 
 <!-- HISTORY -->
 <div class="screen" id="historyScreen"></div>
+
+<!-- PLAYERS -->
+<div class="screen" id="playersScreen"></div>
 
 <!-- COURSES -->
 <div class="screen" id="coursesScreen"></div>
@@ -463,6 +514,10 @@ function scoreLabel(s, par) {
   if (d===2)  return 'Double';
   return '+'+d;
 }
+function scoreVal(s, cls) {
+  if (s === null) return '·';
+  return (cls === 'double' || cls === 'triple') ? `<span>${s}</span>` : s;
+}
 function fmtVsPar(n) { return n===0?'E':(n>0?'+'+n:''+n); }
 function activeScores() { return state.scores[state.activePlayerId] || new Array(18).fill(null); }
 
@@ -471,7 +526,8 @@ function activeScores() { return state.scores[state.activePlayerId] || new Array
 // ═══════════════════════════════════════
 const PLAYER_COLORS = ['pc0','pc1','pc2','pc3','pc4','pc5'];
 const BAND_COLORS   = ['pb0','pb1','pb2','pb3','pb4','pb5'];
-const DOT_LABELS    = ['#52b788','#60a5fa','#fbbf24','#c084fc','#f87171','#38bdf8'];
+const PLAYER_ICONS  = ['●','■','▲','◆','★','⬟'];   // circle, square, triangle, diamond, star, pentagon
+const PLAYER_LABELS = ['Blue ●','Amber ■','Black ▲','Cyan ◆','Orange ★','Violet ⬟'];
 
 function playerColorIdx(pid) {
   return state.players.findIndex(p => p.id === pid) % PLAYER_COLORS.length;
@@ -488,9 +544,15 @@ function renderPlayerBar() {
   state.players.forEach((p, idx) => {
     const isActive = p.id === state.activePlayerId;
     const cc = PLAYER_COLORS[idx % PLAYER_COLORS.length];
+    const icon = PLAYER_ICONS[idx % PLAYER_ICONS.length];
     const tab = document.createElement('div');
     tab.className = `player-tab ${cc}` + (isActive ? ' active' : '');
     tab.onclick = () => selectPlayer(p.id);
+
+    // Icon span
+    const ic = document.createElement('span');
+    ic.className = `p-icon ${cc}`;
+    tab.appendChild(ic);
 
     const nm = document.createElement('span');
     nm.textContent = p.name;
@@ -520,11 +582,18 @@ function renderPlayerBar() {
 function renderPlayerBand() {
   const band = document.getElementById('playerBand');
   if (state.players.length <= 1) { band.style.display = 'none'; return; }
-  const idx = playerColorIdx(state.activePlayerId);
-  const p   = state.players.find(p => p.id === state.activePlayerId);
+  const idx  = playerColorIdx(state.activePlayerId);
+  const p    = state.players.find(p => p.id === state.activePlayerId);
+  const icon = PLAYER_ICONS[idx % PLAYER_ICONS.length];
+  const lbl  = PLAYER_LABELS[idx % PLAYER_LABELS.length];
   band.className = `player-band ${BAND_COLORS[idx]}`;
   band.style.display = 'flex';
-  band.innerHTML = `<div class="band-dot ${PLAYER_COLORS[idx]}"></div>Scoring for: ${p ? p.name : ''}`;
+  band.innerHTML = `
+    <div class="band-icon">${icon}</div>
+    <div class="band-label">
+      ${p ? p.name : ''}
+      <span class="band-sublabel">Now scoring · ${lbl}</span>
+    </div>`;
 }
 
 function selectPlayer(id) {
@@ -664,7 +733,7 @@ function buildNine(cid, start, end, label, parTotal, is9) {
       <div class="score-control">
         <button class="score-btn minus" onclick="changeScore(${i},-1)">−</button>
         <div>
-          <div class="score-display ${scoreClass(s,h.par)}" id="sd${i}">${s!==null?s:'·'}</div>
+          <div class="score-display ${scoreClass(s,h.par)}" id="sd${i}">${scoreVal(s, scoreClass(s,h.par))}</div>
           <div class="score-label" id="sl${i}">${scoreLabel(s,h.par)}</div>
         </div>
         <button class="score-btn plus ${activeColorClass()}" onclick="changeScore(${i},+1)">+</button>
@@ -686,7 +755,7 @@ function updateScoreCell(i) {
   const ll = document.getElementById('sl'+i);
   if (!el) return;
   el.className = 'score-display ' + scoreClass(sc[i], h.par);
-  el.textContent = sc[i]!==null ? sc[i] : '·';
+  el.innerHTML = scoreVal(sc[i], scoreClass(sc[i], h.par));
   ll.textContent = scoreLabel(sc[i], h.par);
 }
 
@@ -806,8 +875,12 @@ function exportCSV() {
 // ═══════════════════════════════════════
 //  HISTORY
 // ═══════════════════════════════════════
-const CHIP_BG  = {empty:'#f0f4ef',eagle:'#f0d98a',birdie:'#3b7de8',par:'#d4e8d8',bogey:'#fce8e3',double:'#e85c3b',triple:'#c0392b'};
-const CHIP_FG  = {empty:'#bbb',eagle:'#1a3a2a',birdie:'white',par:'#1a3a2a',bogey:'#e85c3b',double:'white',triple:'white'};
+const CHIP_BG  = {empty:'#f0f4ef', eagle:'#f5c400', birdie:'#4a90d9', par:'#e8e8e8', bogey:'#f0a500', double:'#c0392b', triple:'#6b0000'};
+const CHIP_FG  = {empty:'#bbb',    eagle:'#1a1a18',  birdie:'#fff',    par:'#1a1a18',  bogey:'#1a1a18', double:'#fff',    triple:'#fff'};
+// Shape suffixes for history chips
+const CHIP_RADIUS = {empty:'5px', eagle:'50%', birdie:'6px', par:'2px', bogey:'12px', double:'2px', triple:'2px'};
+const CHIP_BORDER = {empty:'none', eagle:'2px solid #c9980a', birdie:'2px solid #2c6fab', par:'2px solid #aaa', bogey:'2px solid #c07800', double:'2px solid #8b1a10', triple:'2px solid #3a0000'};
+const CHIP_ROTATE = {empty:'', eagle:'', birdie:'', par:'', bogey:'', double:'rotate(45deg)', triple:'rotate(45deg)'};
 
 function renderHistory() {
   const screen = document.getElementById('historyScreen');
@@ -816,26 +889,28 @@ function renderHistory() {
     screen.innerHTML=`<div class="history-empty"><div class="icon">📋</div><p>No rounds saved yet.<br>Play a round and hit Save!</p></div>`;
     return;
   }
-  // Stats — complete rounds only (holesPlayed matches course hole count)
-  const completeRounds = rounds.filter(r => {
+  // Stats — Mike's complete rounds only (any hole count)
+  const mikeCompleteRounds = rounds.flatMap(r => {
     const c = COURSES.find(x=>x.id===r.courseId);
     const n = c ? c.holes.length : 18;
-    return (r.players||[]).some(p=>p.holesPlayed===n);
+    return (r.players||[])
+      .filter(p => p.name === 'Mike' && p.holesPlayed === n)
+      .map(p => ({ total: p.total, parPlayed: p.parPlayed, holes: n, course: c }));
   });
-  const all18 = completeRounds.flatMap(r => {
-    const c = COURSES.find(x=>x.id===r.courseId);
-    const n = c ? c.holes.length : 18;
-    return (r.players||[]).filter(p=>p.holesPlayed===n).map(p=>p.total);
-  });
-  const best = all18.length ? Math.min(...all18) : null;
-  const avg  = all18.length ? Math.round(all18.reduce((a,b)=>a+b,0)/all18.length) : null;
+  const mikeVsPar = mikeCompleteRounds.map(r => r.total - r.parPlayed);
+  const best18 = mikeCompleteRounds.filter(r=>r.holes===18).map(r=>r.total);
+  const best9  = mikeCompleteRounds.filter(r=>r.holes===9).map(r=>r.total);
+  const best   = mikeCompleteRounds.length ? Math.min(...mikeCompleteRounds.map(r=>r.total)) : null;
+  const avg    = mikeCompleteRounds.length ? Math.round(mikeCompleteRounds.reduce((a,r)=>a+r.total,0)/mikeCompleteRounds.length) : null;
+  const avgVsPar = mikeVsPar.length ? (mikeVsPar.reduce((a,b)=>a+b,0)/mikeVsPar.length).toFixed(1) : null;
   let html = `<div class="history-toolbar"><button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button></div>`;
-  if (all18.length) {
-    html += `<div class="stats-summary"><h3>📊 All-Time Stats (18-hole rounds)</h3>
+  if (mikeCompleteRounds.length) {
+    html += `<div class="stats-summary"><h3>📊 Mike's Stats (complete rounds)</h3>
       <div class="stats-grid">
-        <div class="stat-box"><div class="sv">${all18.length}</div><div class="sk">Rounds</div></div>
+        <div class="stat-box"><div class="sv">${mikeCompleteRounds.length}</div><div class="sk">Rounds</div></div>
         <div class="stat-box"><div class="sv">${best}</div><div class="sk">Best</div></div>
         <div class="stat-box"><div class="sv">${avg}</div><div class="sk">Avg</div></div>
+        ${avgVsPar!==null?`<div class="stat-box"><div class="sv">${avgVsPar>0?'+'+avgVsPar:avgVsPar}</div><div class="sk">Avg +/-</div></div>`:''}
       </div></div>`;
   }
   rounds.forEach(r => {
@@ -843,17 +918,48 @@ function renderHistory() {
     const multi = (r.players||[]).length > 1;
     const playersHtml = (r.players||[]).map(p => {
       const pvp = p.total - p.parPlayed;
-      const chips = p.scores.map((s,i)=>{
-        const hp = course.holes[i]?course.holes[i].par:4;
-        if (s===null) return `<div class="round-hole-chip" style="background:#f0f4ef;color:#bbb;">${i+1}</div>`;
-        const cls = scoreClass(s,hp);
-        return `<div class="round-hole-chip" style="background:${CHIP_BG[cls]};color:${CHIP_FG[cls]};">${s}</div>`;
-      }).join('');
+      const frontScores = p.scores.slice(0, 9);
+      const backScores  = p.scores.slice(9);
+      const frontTotal  = frontScores.filter(s=>s!==null).reduce((a,b)=>a+b,0);
+      const backTotal   = backScores.filter(s=>s!==null).reduce((a,b)=>a+b,0);
+      const frontPar    = course.holes.slice(0,9).reduce((a,h)=>a+h.par,0);
+      const backPar     = course.holes.slice(9).reduce((a,h)=>a+h.par,0);
+      const hasFront    = frontScores.some(s=>s!==null);
+      const hasBack     = backScores.some(s=>s!==null);
+      const is9         = course.holes9 === true;
+
+      function makeChips(scores, offset) {
+        return scores.map((s,i)=>{
+          const hi = i + offset;
+          const hp = course.holes[hi]?course.holes[hi].par:4;
+          if (s===null) return `<div class="round-hole-chip" style="background:#f0f4ef;color:#bbb;border-radius:5px;">${hi+1}</div>`;
+          const cls = scoreClass(s,hp);
+          const rot = CHIP_ROTATE[cls] ? `transform:${CHIP_ROTATE[cls]};font-size:10px;` : '';
+          const inner = (cls==='double'||cls==='triple') ? `<span style="display:block;transform:rotate(-45deg)">${s}</span>` : s;
+          return `<div class="round-hole-chip" style="background:${CHIP_BG[cls]};color:${CHIP_FG[cls]};border-radius:${CHIP_RADIUS[cls]};border:${CHIP_BORDER[cls]};${rot}">${inner}</div>`;
+        }).join('');
+      }
+
+      let chipHtml = '';
+      if (is9) {
+        chipHtml = `<div class="round-hole-chips">${makeChips(frontScores, 0)}</div>`;
+      } else {
+        chipHtml = `
+          <div class="nine-chip-group">
+            <div class="nine-chip-label">Front ${hasFront ? '<span class="nine-chip-total">'+frontTotal+'</span><span class="nine-chip-vp">('+fmtVsPar(frontTotal-frontPar)+')</span>' : ''}</div>
+            <div class="round-hole-chips">${makeChips(frontScores, 0)}</div>
+          </div>
+          <div class="nine-chip-group">
+            <div class="nine-chip-label">Back ${hasBack ? '<span class="nine-chip-total">'+backTotal+'</span><span class="nine-chip-vp">('+fmtVsPar(backTotal-backPar)+')</span>' : ''}</div>
+            <div class="round-hole-chips">${makeChips(backScores, 9)}</div>
+          </div>`;
+      }
+
       return `<div class="round-player-row">
         <div class="round-player-name">${p.name}
           <span class="player-score-inline">${p.total} (${fmtVsPar(pvp)})</span>
         </div>
-        <div class="round-hole-chips">${chips}</div>
+        ${chipHtml}
       </div>`;
     }).join('');
     const fp = r.players[0];
@@ -869,7 +975,7 @@ function renderHistory() {
         </div>
       </div>
       <div class="round-players-section">${playersHtml}</div>
-      <div class="round-card-footer">🟡 Eagle · 🔵 Birdie · 🟢 Par · 🟠 Bogey · 🔴 Double+</div>
+      <div class="round-card-footer">🟡 Eagle · 🔵 Birdie · ⬜ Par · 🟠 Bogey · 🔴 Double · ⬛ Triple+</div>
     </div>`;
   });
   screen.innerHTML = html;
@@ -934,6 +1040,138 @@ function setActiveCourse(id) {
 }
 
 // ═══════════════════════════════════════
+//  HANDICAP (Mike only)
+//  Uses World Handicap System (WHS):
+//  Differential = (Score - Course Rating) × 113 / Slope
+//  Index = avg of best 8 of last 20 differentials × 0.96
+// ═══════════════════════════════════════
+function calcHandicap() {
+  const rounds = getRounds();
+  // Gather Mike's completed rounds with course rating/slope available
+  const diffs = [];
+  rounds.forEach(r => {
+    const c = COURSES.find(x=>x.id===r.courseId);
+    if (!c || !c.rating || !c.slope) return;
+    const mike = (r.players||[]).find(p=>p.name==='Mike');
+    if (!mike) return;
+    const n = c.holes.length;
+    if (mike.holesPlayed !== n) return; // complete rounds only
+    // For 9-hole courses, WHS uses 18-hole equivalent (double the differential)
+    let diff = (mike.total - c.rating) * 113 / c.slope;
+    if (n === 9) diff = diff * 2; // equate to 18-hole
+    diffs.push({ diff: parseFloat(diff.toFixed(1)), date: r.date, courseName: c.shortName||c.name, score: mike.total, par: c.par, holes: n, rating: c.rating, slope: c.slope, courseId: c.id });
+  });
+  if (!diffs.length) return { index: null, diffs: [] };
+
+  // Use up to last 20
+  const recent = diffs.slice(0, 20);
+  // Number of differentials to use based on WHS table
+  const useCount = recent.length <= 3 ? 1
+    : recent.length <= 5 ? 1
+    : recent.length <= 6 ? 2
+    : recent.length <= 8 ? 2
+    : recent.length <= 11 ? 3
+    : recent.length <= 14 ? 4
+    : recent.length <= 16 ? 5
+    : recent.length <= 18 ? 6
+    : recent.length === 19 ? 7
+    : 8;
+
+  const sorted = [...recent].sort((a,b)=>a.diff-b.diff);
+  const best   = sorted.slice(0, useCount);
+  const avgDiff = best.reduce((a,d)=>a+d.diff,0) / best.length;
+  const index   = Math.floor(avgDiff * 0.96 * 10) / 10; // truncate to 1 decimal
+
+  return { index, diffs: recent, best: new Set(best.map((_,i)=>sorted.indexOf(best[i]))) };
+}
+
+function renderPlayers() {
+  const screen = document.getElementById('playersScreen');
+  const { index, diffs } = calcHandicap();
+
+  if (!diffs || diffs.length === 0) {
+    screen.innerHTML = `
+      <div class="hcp-hero">
+        <div class="hcp-hero-left">
+          <h2>Mike</h2>
+          <div class="hcp-sub">Handicap Index</div>
+        </div>
+        <div class="hcp-hero-index">
+          <div class="hcp-val">—</div>
+          <div class="hcp-lbl">Index</div>
+        </div>
+      </div>
+      <div class="hcp-empty">
+        <div class="icon">⛳</div>
+        <p>No complete rounds yet.<br>Finish and save a round to start tracking your handicap.</p>
+      </div>`;
+    return;
+  }
+
+  // Stats
+  const allDiffs  = diffs.map(d=>d.diff);
+  const bestDiff  = Math.min(...allDiffs).toFixed(1);
+  const rounds18  = diffs.filter(d=>d.holes===18).length;
+  const rounds9   = diffs.filter(d=>d.holes===9).length;
+  const trend     = diffs.length >= 2 ? (diffs[0].diff - diffs[1].diff).toFixed(1) : null;
+  const trendStr  = trend === null ? '—' : (parseFloat(trend) < 0 ? '▼ '+Math.abs(trend) : parseFloat(trend) > 0 ? '▲ '+trend : '→ 0.0');
+  const trendNote = trend === null ? '' : parseFloat(trend) < 0 ? 'improving' : parseFloat(trend) > 0 ? 'trending up' : 'steady';
+
+  // Determine which diffs are used in the index calculation
+  const { best: bestSet } = calcHandicap();
+  const sortedByDiff = [...diffs].sort((a,b)=>a.diff-b.diff);
+  const useCount = diffs.length <= 3 ? 1 : diffs.length <= 6 ? 2 : diffs.length <= 8 ? 2 : diffs.length <= 11 ? 3 : diffs.length <= 14 ? 4 : diffs.length <= 16 ? 5 : diffs.length <= 18 ? 6 : diffs.length === 19 ? 7 : 8;
+  const usedDiffs = new Set(sortedByDiff.slice(0, useCount).map(d => diffs.indexOf(d)));
+
+  const indexDisplay = index !== null ? (index < 0 ? index.toFixed(1) : '+' === Math.sign(index).toString() ? index.toFixed(1) : index.toFixed(1)) : '—';
+
+  let html = `
+    <div class="hcp-hero">
+      <div class="hcp-hero-left">
+        <h2>Mike</h2>
+        <div class="hcp-sub">Handicap Index</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--green-pale);font-family:'DM Mono',monospace;">${diffs.length} round${diffs.length!==1?'s':''} · ${rounds18} × 18-hole · ${rounds9} × 9-hole</div>
+        ${trend!==null?`<div style="margin-top:4px;font-size:11px;color:var(--gold-light);font-family:'DM Mono',monospace;">${trendStr} ${trendNote}</div>`:''}
+      </div>
+      <div class="hcp-hero-index">
+        <div class="hcp-val">${indexDisplay}</div>
+        <div class="hcp-lbl">Index</div>
+        ${diffs.length < 3 ? `<div class="hcp-note">Est. — need 3+ rounds</div>` : ''}
+      </div>
+    </div>
+
+    <div class="hcp-stats-row">
+      <div class="hcp-stat-box"><div class="sv">${diffs.length}</div><div class="sk">Rounds</div></div>
+      <div class="hcp-stat-box"><div class="sv">${bestDiff}</div><div class="sk">Best Diff</div></div>
+      <div class="hcp-stat-box"><div class="sv">${Math.min(...diffs.map(d=>d.score))}</div><div class="sk">Best Score</div></div>
+      <div class="hcp-stat-box"><div class="sv">${Math.round(diffs.reduce((a,d)=>a+d.score,0)/diffs.length)}</div><div class="sk">Avg Score</div></div>
+    </div>
+
+    <div class="hcp-section">
+      <div class="hcp-section-header">Score Differentials <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold-light);float:right;font-weight:400;">used in index ✓</span></div>`;
+
+  diffs.forEach((d, i) => {
+    const used = usedDiffs.has(i);
+    const nineNote = d.holes === 9 ? ' (9-hole×2)' : '';
+    html += `<div class="hcp-diff-row${used?' used-in-calc':''}">
+      <div class="hcp-diff-date">${d.date}</div>
+      <div class="hcp-diff-course">${d.courseName}</div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <div class="hcp-diff-val">${d.diff}${nineNote}</div>
+        ${used?'<div class="hcp-diff-tag">✓</div>':''}
+      </div>
+    </div>`;
+  });
+
+  html += `<div class="hcp-formula-note">
+    WHS formula: (Score − Course Rating) × 113 ÷ Slope<br>
+    Index = avg of best ${useCount} of ${diffs.length} differentials × 0.96
+  </div></div>`;
+
+  screen.innerHTML = html;
+}
+
+// ═══════════════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════════════
 function showScreen(name, tabEl) {
@@ -943,6 +1181,7 @@ function showScreen(name, tabEl) {
   (tabEl||document.getElementById('tab-'+name)).classList.add('active');
   if (name==='history') renderHistory();
   if (name==='courses') renderCourses();
+  if (name==='players') renderPlayers();
 }
 
 // ═══════════════════════════════════════
