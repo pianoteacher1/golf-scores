@@ -788,17 +788,7 @@ function updateSummary() {
   }
 }
 
-function updateBanner() {
-  const el = document.getElementById('ipBanner');
-  const anyScore = Object.values(state.scores).some(arr=>arr.some(s=>s!==null));
-  if (anyScore) {
-    const h = activeScores().filter(s=>s!==null).length;
-    const total = holeCount();
-    el.innerHTML = `<div class="ip-banner">⚡ Round in progress — scores auto-saved. Hole ${h}/${total}. Safe to close or refresh.</div>`;
-  } else {
-    el.innerHTML = '';
-  }
-}
+function updateBanner() {}
 
 // ═══════════════════════════════════════
 //  SCORING
