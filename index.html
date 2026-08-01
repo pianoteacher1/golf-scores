@@ -47,7 +47,7 @@
   }
 
   /* Player icons — shape-based so color-blind users can distinguish by shape alone */
-  .p-icon { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; font-size: 15px; flex-shrink: 0; }
+  .p-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; font-size: 10px; flex-shrink: 0; line-height: 1; }
   .p-icon.pc0::before { content: '●'; color: var(--p0); }       /* filled circle */
   .p-icon.pc1::before { content: '■'; color: var(--p1); }       /* filled square */
   .p-icon.pc2::before { content: '▲'; color: var(--p2); }       /* triangle */
@@ -76,7 +76,7 @@
 
   /* ── ACTIVE PLAYER BAND — large, unmissable ── */
   .player-band { padding: 10px 14px; font-size: 14px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 10px; border-bottom: 3px solid transparent; }
-  .player-band .band-icon { font-size: 22px; flex-shrink: 0; line-height: 1; }
+  .player-band .band-icon { font-size: 14px; flex-shrink: 0; line-height: 1; }
   .player-band .band-label { flex: 1; }
   .player-band .band-sublabel { font-size: 10px; font-weight: 500; opacity: 0.7; letter-spacing: 0.06em; display: block; margin-top: 1px; font-family: 'DM Mono', monospace; }
   .player-band.pb0 { background: var(--p0-light); color: var(--p0-text); border-bottom-color: var(--p0); }
@@ -131,16 +131,13 @@
   .score-btn.minus { background: #e8ede6; color: var(--text-muted); }
   .score-btn.plus  { background: var(--green-light); color: #fff; }
   .score-display { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 700; transition: background 0.2s, color 0.2s; position: relative; }
-  /* Shapes: eagle=circle, birdie=rounded square, par=square, bogey=wide pill, double/triple=diamond-ish */
   .score-display.empty  { background: #f0f4ef; color: #c0ccbc; border-radius: 9px; }
-  .score-display.eagle  { background: #f5c400; color: #1a1a18; border-radius: 50%;   border: 2px solid #c9980a; } /* gold circle */
-  .score-display.birdie { background: #4a90d9; color: #fff;    border-radius: 10px;  border: 2px solid #2c6fab; } /* blue rounded square */
-  .score-display.par    { background: #e8e8e8; color: #1a1a18; border-radius: 4px;   border: 2px solid #aaa; }   /* grey square */
-  .score-display.bogey  { background: #f0a500; color: #1a1a18; border-radius: 22px;  border: 2px solid #c07800; } /* amber pill */
-  .score-display.double { background: #c0392b; color: #fff;    border-radius: 4px;   border: 2px solid #8b1a10; transform: rotate(45deg); font-size: 16px; }
-  .score-display.double span { display: block; transform: rotate(-45deg); }
-  .score-display.triple { background: #6b0000; color: #fff;    border-radius: 4px;   border: 2px solid #3a0000; transform: rotate(45deg); font-size: 16px; }
-  .score-display.triple span { display: block; transform: rotate(-45deg); }
+  .score-display.eagle  { background: #f5c400; color: #1a1a18; border-radius: 50%;  border: 2px solid #c9980a; }
+  .score-display.birdie { background: #4a90d9; color: #fff;    border-radius: 10px; border: 2px solid #2c6fab; }
+  .score-display.par    { background: #e8e8e8; color: #1a1a18; border-radius: 4px;  border: 2px solid #aaa; }
+  .score-display.bogey  { background: #f0a500; color: #1a1a18; border-radius: 4px;  border: 2px solid #c07800; }
+  .score-display.double { background: #c0392b; color: #fff;    border-radius: 4px;  border: 2px solid #8b1a10; }
+  .score-display.triple { background: #6b0000; color: #fff;    border-radius: 4px;  border: 2px solid #3a0000; }
   .score-label { font-size: 9px; text-align: center; margin-top: 1px; color: var(--text-muted); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; text-transform: uppercase; width: 44px; }
 
   /* ── NINE TOTAL ROW ── */
@@ -515,8 +512,7 @@ function scoreLabel(s, par) {
   return '+'+d;
 }
 function scoreVal(s, cls) {
-  if (s === null) return '·';
-  return (cls === 'double' || cls === 'triple') ? `<span>${s}</span>` : s;
+  return s !== null ? s : '·';
 }
 function fmtVsPar(n) { return n===0?'E':(n>0?'+'+n:''+n); }
 function activeScores() { return state.scores[state.activePlayerId] || new Array(18).fill(null); }
@@ -878,9 +874,8 @@ function exportCSV() {
 const CHIP_BG  = {empty:'#f0f4ef', eagle:'#f5c400', birdie:'#4a90d9', par:'#e8e8e8', bogey:'#f0a500', double:'#c0392b', triple:'#6b0000'};
 const CHIP_FG  = {empty:'#bbb',    eagle:'#1a1a18',  birdie:'#fff',    par:'#1a1a18',  bogey:'#1a1a18', double:'#fff',    triple:'#fff'};
 // Shape suffixes for history chips
-const CHIP_RADIUS = {empty:'5px', eagle:'50%', birdie:'6px', par:'2px', bogey:'12px', double:'2px', triple:'2px'};
+const CHIP_RADIUS = {empty:'5px', eagle:'50%', birdie:'6px', par:'2px', bogey:'4px', double:'2px', triple:'2px'};
 const CHIP_BORDER = {empty:'none', eagle:'2px solid #c9980a', birdie:'2px solid #2c6fab', par:'2px solid #aaa', bogey:'2px solid #c07800', double:'2px solid #8b1a10', triple:'2px solid #3a0000'};
-const CHIP_ROTATE = {empty:'', eagle:'', birdie:'', par:'', bogey:'', double:'rotate(45deg)', triple:'rotate(45deg)'};
 
 function renderHistory() {
   const screen = document.getElementById('historyScreen');
@@ -934,9 +929,8 @@ function renderHistory() {
           const hp = course.holes[hi]?course.holes[hi].par:4;
           if (s===null) return `<div class="round-hole-chip" style="background:#f0f4ef;color:#bbb;border-radius:5px;">${hi+1}</div>`;
           const cls = scoreClass(s,hp);
-          const rot = CHIP_ROTATE[cls] ? `transform:${CHIP_ROTATE[cls]};font-size:10px;` : '';
-          const inner = (cls==='double'||cls==='triple') ? `<span style="display:block;transform:rotate(-45deg)">${s}</span>` : s;
-          return `<div class="round-hole-chip" style="background:${CHIP_BG[cls]};color:${CHIP_FG[cls]};border-radius:${CHIP_RADIUS[cls]};border:${CHIP_BORDER[cls]};${rot}">${inner}</div>`;
+          const inner = s;
+          return `<div class="round-hole-chip" style="background:${CHIP_BG[cls]};color:${CHIP_FG[cls]};border-radius:${CHIP_RADIUS[cls]};border:${CHIP_BORDER[cls]};">${inner}</div>`;
         }).join('');
       }
 
