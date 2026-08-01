@@ -241,19 +241,20 @@
   .use-course-btn:active { opacity: 0.8; }
 
   /* ── GPS DISTANCE WIDGET ── */
-  .gps-bar { background: var(--green-dark); border-bottom: 1px solid rgba(201,168,76,0.25); padding: 0; overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+  .gps-bar { background: var(--green-dark); border-bottom: 2px solid var(--gold); padding: 0; overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
   .gps-bar.visible { max-height: 80px; }
   .gps-bar-inner { padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
-  .gps-distance { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--gold); line-height: 1; min-width: 64px; }
-  .gps-distance .gps-unit { font-size: 13px; color: var(--gold-light); font-family: 'DM Mono', monospace; margin-left: 2px; }
+  .gps-distance { font-family: 'Playfair Display', serif; font-size: 28px; color: #fff; line-height: 1; min-width: 68px; }
+  .gps-distance .gps-unit { font-size: 13px; color: var(--gold); font-family: 'DM Mono', monospace; margin-left: 3px; font-weight: 600; }
   .gps-meta { flex: 1; }
-  .gps-hole-label { font-size: 11px; color: var(--green-pale); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; }
-  .gps-status { font-size: 10px; color: rgba(212,232,216,0.6); font-family: 'DM Mono', monospace; margin-top: 1px; }
-  .gps-toggle-btn { flex-shrink: 0; background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.35); color: var(--gold); border-radius: 20px; padding: 5px 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; white-space: nowrap; }
-  .gps-toggle-btn.active { background: rgba(201,168,76,0.3); }
-  .gps-toggle-btn:active { background: rgba(201,168,76,0.45); }
-  .gps-enable-row { display: flex; justify-content: flex-end; padding: 6px 12px 8px; }
-  .hole-row.current-hole { background: #f5fbf5; border-left: 3px solid var(--green-light); }
+  .gps-hole-label { font-size: 12px; color: var(--gold); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+  .gps-status { font-size: 10px; color: var(--green-pale); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .gps-toggle-btn { flex-shrink: 0; background: #c0392b; border: 2px solid #ff6b6b; color: #fff; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; white-space: nowrap; }
+  .gps-toggle-btn:active { background: #9d2218; }
+  .gps-enable-row { display: flex; justify-content: center; padding: 8px 12px; }
+  .gps-enable-row .gps-toggle-btn { background: #0057b8; border: 2px solid #5ba4f5; color: #fff; font-size: 13px; padding: 10px 22px; border-radius: 10px; }
+  .gps-enable-row .gps-toggle-btn:active { background: #003d80; }
+  .hole-row.current-hole { background: #fff8e6; border-left: 4px solid var(--gold); }
 
   /* ── TOAST ── */
   .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--green-dark); color: var(--gold); padding: 10px 22px; border-radius: 30px; font-size: 13px; font-weight: 600; border: 1px solid var(--gold); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 999; white-space: nowrap; }
@@ -686,6 +687,9 @@ function buildScorecard() {
   updateSummary();
   updateBanner();
   renderCourseInfoBanner();
+  // Keep GPS UI consistent if GPS is already running
+  if (typeof gpsSetUI === 'function') gpsSetUI(gpsActive);
+  if (gpsActive && lastPos) updateGPSDisplay(lastPos);
 }
 
 function renderCourseInfoBanner() {
@@ -1191,19 +1195,17 @@ function showToast(msg) {
 // ═══════════════════════════════════════
 //  GPS DISTANCE TO GREEN
 // ═══════════════════════════════════════
-let gpsWatchId    = null;
-let gpsActive     = false;
-let lastPos       = null;
-let currentHoleIdx = 0;  // 0-based index of hole currently being played
+let gpsWatchId     = null;
+let gpsActive      = false;
+let lastPos        = null;
 
 function haversineYards(lat1, lng1, lat2, lng2) {
-  const R = 6371000; // metres
+  const R  = 6371000;
   const φ1 = lat1 * Math.PI / 180, φ2 = lat2 * Math.PI / 180;
   const Δφ = (lat2 - lat1) * Math.PI / 180;
   const Δλ = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
-  const metres = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return Math.round(metres * 1.09361); // yards
+  const a  = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.09361);
 }
 
 function getNearestUnfinishedHole() {
@@ -1217,53 +1219,54 @@ function updateGPSDisplay(pos) {
   lastPos = pos;
   const holes = getHoles();
   const idx   = getNearestUnfinishedHole();
-  currentHoleIdx = idx;
   const hole  = holes[idx];
 
   document.getElementById('gpsHoleLabel').textContent = `Hole ${hole.n} · to green`;
 
   if (!hole.green) {
     document.getElementById('gpsDistVal').textContent = '—';
-    document.getElementById('gpsStatus').textContent = 'Coordinates pending for this hole';
-    highlightCurrentHole(idx);
-    return;
+    document.getElementById('gpsStatus').textContent  = 'Coordinates pending for this hole';
+  } else {
+    const yds = haversineYards(pos.coords.latitude, pos.coords.longitude, hole.green.lat, hole.green.lng);
+    const acc  = Math.round(pos.coords.accuracy * 1.09361);
+    document.getElementById('gpsDistVal').textContent = yds;
+    document.getElementById('gpsStatus').textContent  =
+      `±${acc} yds accuracy · ${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
   }
 
-  const yds = haversineYards(pos.coords.latitude, pos.coords.longitude, hole.green.lat, hole.green.lng);
-  document.getElementById('gpsDistVal').textContent = yds;
-  const acc = Math.round(pos.coords.accuracy * 1.09361);
-  document.getElementById('gpsStatus').textContent = `±${acc} yds accuracy · updated ${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
   highlightCurrentHole(idx);
 }
 
 function highlightCurrentHole(idx) {
-  document.querySelectorAll('.hole-row').forEach((row, i) => {
-    row.classList.toggle('current-hole', i === idx);
-  });
-  // Scroll hole into view gently
   const rows = document.querySelectorAll('.hole-row');
-  if (rows[idx]) rows[idx].scrollIntoView({behavior:'smooth', block:'nearest'});
+  rows.forEach((row, i) => row.classList.toggle('current-hole', i === idx));
+  if (rows[idx]) rows[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function gpsSetUI(active) {
+  document.getElementById('gpsBar').classList.toggle('visible', active);
+  // Only show the enable button when GPS is OFF, and only if geolocation is supported
+  const enableRow = document.getElementById('gpsEnableRow');
+  enableRow.style.display = (!active && navigator.geolocation) ? 'flex' : 'none';
+  const btn = document.getElementById('gpsToggleBtn');
+  if (btn) btn.textContent = active ? 'Stop GPS' : 'Enable GPS';
 }
 
 function startGPS() {
-  if (!navigator.geolocation) {
-    showToast('GPS not supported on this device');
-    return;
-  }
-  document.getElementById('gpsEnableRow').style.display = 'none';
-  document.getElementById('gpsBar').classList.add('visible');
-  document.getElementById('gpsStatus').textContent = 'Acquiring location…';
+  if (!navigator.geolocation) { showToast('GPS not supported on this device'); return; }
   gpsActive = true;
+  gpsSetUI(true);
+  document.getElementById('gpsStatus').textContent = 'Acquiring location…';
 
   gpsWatchId = navigator.geolocation.watchPosition(
     pos => updateGPSDisplay(pos),
     err => {
       const msgs = {
         1: 'Location denied — enable in browser Settings → Site Settings → Location',
-        2: 'Position unavailable',
-        3: 'Location request timed out'
+        2: 'Position unavailable — check signal',
+        3: 'Location timed out — retrying'
       };
-      document.getElementById('gpsStatus').textContent = msgs[err.code] || 'GPS error';
+      document.getElementById('gpsStatus').textContent  = msgs[err.code] || 'GPS error';
       document.getElementById('gpsDistVal').textContent = '—';
     },
     { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
@@ -1276,28 +1279,19 @@ function stopGPS() {
     gpsWatchId = null;
   }
   gpsActive = false;
-  document.getElementById('gpsBar').classList.remove('visible');
-  document.getElementById('gpsEnableRow').style.display = 'flex';
+  gpsSetUI(false);
   document.querySelectorAll('.hole-row').forEach(r => r.classList.remove('current-hole'));
 }
 
 function toggleGPS() {
-  if (gpsActive) {
-    stopGPS();
-    document.getElementById('gpsToggleBtn').textContent = 'Stop GPS';
-  } else {
-    startGPS();
-  }
+  gpsActive ? stopGPS() : startGPS();
 }
 
-// Re-run distance calc when scoring advances the current hole
-
-const _origChangeScore = changeScore;
 function changeScore(i, delta) {
   const pid = state.activePlayerId;
   const h   = getHoles()[i];
   const cur = state.scores[pid][i];
-  state.scores[pid][i] = cur===null ? (delta>0?h.par:h.par-1) : Math.max(1, cur+delta);
+  state.scores[pid][i] = cur === null ? (delta > 0 ? h.par : h.par - 1) : Math.max(1, cur + delta);
   persist();
   updateScoreCell(i);
   updateNineTotals();
@@ -1312,10 +1306,8 @@ function changeScore(i, delta) {
 document.getElementById('headerDate').textContent =
   new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
 
-// Show GPS button if supported
-if (navigator.geolocation) {
-  document.getElementById('gpsEnableRow').style.display = 'flex';
-}
+// Set initial GPS button state
+gpsSetUI(false);
 
 renderPlayerBar();
 buildScorecard();
