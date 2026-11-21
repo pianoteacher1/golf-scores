@@ -453,6 +453,43 @@ const COURSES = [
       {n:18, par:4, hcp:9,  green:{lat:32.247389475250856, lng:-90.41091293780029}},
     ]
   }
+  ,
+  {
+    id: 'wolf_hollow',
+    name: 'Wolf Hollow Golf Course',
+    shortName: 'Wolf Hollow',
+    location: 'Wesson, MS',
+    tee: 'White',
+    par: 72,
+    yds: 6365,
+    rating: 69.4,
+    slope: 115,
+    designer: 'Kevin Tucker',
+    opened: 1996,
+    notes: 'Public course at Copiah-Lincoln Community College. Hilly, bunkerless layout with water on several holes, including two island greens, and plenty of blind shots.',
+    // Par and white tee yardages confirmed across multiple scorecards (front 3,173 + back 3,192 = 6,365).
+    // Hole handicaps omitted: sources disagree. Green coordinates not yet added.
+    holes: [
+      {n:1,  par:5, yds:494, green:null},
+      {n:2,  par:4, yds:392, green:null},
+      {n:3,  par:4, yds:344, green:null},
+      {n:4,  par:3, yds:157, green:null},
+      {n:5,  par:4, yds:325, green:null},
+      {n:6,  par:4, yds:419, green:null},
+      {n:7,  par:5, yds:513, green:null},
+      {n:8,  par:3, yds:133, green:null},
+      {n:9,  par:4, yds:396, green:null},
+      {n:10, par:4, yds:388, green:null},
+      {n:11, par:3, yds:156, green:null},
+      {n:12, par:5, yds:555, green:null},
+      {n:13, par:4, yds:384, green:null},
+      {n:14, par:3, yds:123, green:null},
+      {n:15, par:4, yds:377, green:null},
+      {n:16, par:5, yds:505, green:null},
+      {n:17, par:4, yds:370, green:null},
+      {n:18, par:4, yds:334, green:null},
+    ]
+  }
 ];
 
 // ═══════════════════════════════════════
@@ -1205,23 +1242,33 @@ function getNearestUnfinishedHole() {
   return n - 1;
 }
 
+const GPS_ACCURACY_THRESHOLD_YDS = 20; // won't display yardage until accuracy is within this
+
 function updateGPSDisplay(pos) {
   lastPos = pos;
-  const holes = getHoles();
-  const idx   = getNearestUnfinishedHole();
-  const hole  = holes[idx];
+  const holes   = getHoles();
+  const idx     = getNearestUnfinishedHole();
+  const hole    = holes[idx];
+  const accYds  = Math.round(pos.coords.accuracy * 1.09361);
 
   document.getElementById('gpsHoleLabel').textContent = `Hole ${hole.n} · to green`;
+
+  if (accYds > GPS_ACCURACY_THRESHOLD_YDS) {
+    document.getElementById('gpsDistVal').textContent = '…';
+    document.getElementById('gpsStatus').textContent  =
+      `Acquiring · ±${accYds} yds — waiting for lock (need ±${GPS_ACCURACY_THRESHOLD_YDS})`;
+    highlightCurrentHole(idx);
+    return;
+  }
 
   if (!hole.green) {
     document.getElementById('gpsDistVal').textContent = '—';
     document.getElementById('gpsStatus').textContent  = 'Coordinates pending for this hole';
   } else {
     const yds = haversineYards(pos.coords.latitude, pos.coords.longitude, hole.green.lat, hole.green.lng);
-    const acc  = Math.round(pos.coords.accuracy * 1.09361);
     document.getElementById('gpsDistVal').textContent = yds;
     document.getElementById('gpsStatus').textContent  =
-      `±${acc} yds accuracy · ${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+      `±${accYds} yds accuracy · ${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
   }
 
   highlightCurrentHole(idx);
